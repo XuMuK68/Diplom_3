@@ -2,6 +2,8 @@ package tests;
 
 import client.Client;
 import client.ClientSteps;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import org.junit.Test;
 import pages.MainPage;
@@ -15,6 +17,8 @@ import static org.junit.Assert.assertTrue;
 public class RegisterTest extends BaseTest {
 
     @Test
+    @DisplayName("Успешная регистрация пользователя")
+    @Description("Проверить, что после регистрации пользователя открывается страница входа.")
     public void successfulRegistrationTest() {
         ClientSteps clientSteps = new ClientSteps();
         Client client = clientSteps.createTestClient();
@@ -43,6 +47,8 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Ошибка при регистрации с коротким паролем")
+    @Description("Проверить, что при вводе пароля короче допустимого отображается сообщение об ошибке.")
     public void registrationWithShortPasswordShowsError() {
         MainPage mainPage = new MainPage(driver);
         RegisterPage registerPage = new RegisterPage(driver);

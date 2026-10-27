@@ -1,5 +1,6 @@
 package client;
 
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
 import java.util.UUID;
@@ -12,6 +13,7 @@ public class ClientSteps {
             "https://qa-stellarburgers.education-services.ru";
 
     // Создание уникальных данных тестового пользователя
+    @Step("Создать тестового пользователя")
     public Client createTestClient() {
         String email = "test_" + UUID.randomUUID() + "@ya.ru";
         String password = "123456123";
@@ -21,6 +23,7 @@ public class ClientSteps {
     }
 
     // Регистрация пользователя через API
+    @Step("Зарегистрировать пользователя через API")
     public Response registerClient(Client client) {
         return given()
                 .baseUri(BASE_URL)
@@ -31,6 +34,7 @@ public class ClientSteps {
     }
 
     // Удаление пользователя через API
+    @Step("Удалить пользователя через API")
     public Response deleteClient(String accessToken) {
         return given()
                 .baseUri(BASE_URL)
@@ -39,14 +43,17 @@ public class ClientSteps {
                 .delete("/api/auth/user");
     }
 
+    @Step("Авторизовать пользователя через API")
     public Response loginClient(Client client) {
+        LoginClient loginClient = new LoginClient(
+                client.getEmail(),
+                client.getPassword()
+        );
+
         return given()
                 .baseUri(BASE_URL)
                 .header("Content-Type", "application/json")
-                .body(java.util.Map.of(
-                        "email", client.getEmail(),
-                        "password", client.getPassword()
-                ))
+                .body(loginClient)
                 .when()
                 .post("/api/auth/login");
     }

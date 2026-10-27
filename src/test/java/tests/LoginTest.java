@@ -1,8 +1,13 @@
+
 package tests;
 
 import client.Client;
 import client.ClientSteps;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import pages.ForgotPasswordPage;
 import pages.LoginPage;
@@ -13,96 +18,87 @@ import static org.junit.Assert.assertTrue;
 
 public class LoginTest extends BaseTest {
 
+    private Client client;
+
+    @Before
+    public void setUpClient() {
+        client = createTestClient();
+    }
+
     @Test
+    @DisplayName("Вход через кнопку «Войти» на главной странице")
+    @Description("Проверить, что пользователь может войти через кнопку «Войти» на главной странице и после авторизации видит кнопку заказа.")
     public void loginFromMainPageButton() {
-        Client client = createTestClient();
+        MainPage mainPage = new MainPage(driver);
+        mainPage.clickLoginButton();
 
-        try {
-            MainPage mainPage = new MainPage(driver);
-            mainPage.clickLoginButton();
+        loginPage(client);
 
-            loginPage(client);
-
-            assertTrue(
-                    "После входа не открылась главная страница",
-                    mainPage.isOrderButtonDisplayed()
-            );
-        } finally {
-            deleteTestClient(client);
-        }
+        assertTrue(
+                "После входа не открылась главная страница",
+                mainPage.isOrderButtonDisplayed()
+        );
     }
 
     @Test
+    @DisplayName("Вход через кнопку личного кабинета")
+    @Description("Проверить, что пользователь может войти через кнопку личного кабинета и после авторизации видит кнопку заказа.")
     public void loginFromPersonalAccountButton() {
-        Client client = createTestClient();
+        MainPage mainPage = new MainPage(driver);
+        mainPage.clickAccountButton();
 
-        try {
-            MainPage mainPage = new MainPage(driver);
-            mainPage.clickAccountButton();
+        loginPage(client);
 
-            loginPage(client);
-
-            assertTrue(
-                    "После входа не открылась главная страница",
-                    mainPage.isOrderButtonDisplayed()
-            );
-        } finally {
-            deleteTestClient(client);
-        }
+        assertTrue(
+                "После входа не открылась главная страница",
+                mainPage.isOrderButtonDisplayed()
+        );
     }
 
     @Test
+    @DisplayName("Вход со страницы регистрации")
+    @Description("Проверить, что пользователь может перейти со страницы регистрации на страницу входа, авторизоваться и увидеть кнопку заказа.")
     public void loginFromRegisterPage() {
-        Client client = createTestClient();
+        MainPage mainPage = new MainPage(driver);
+        RegisterPage registerPage = new RegisterPage(driver);
 
-        try {
-            MainPage mainPage = new MainPage(driver);
-            RegisterPage registerPage = new RegisterPage(driver);
+        mainPage.clickLoginButton();
+        registerPage.clickRegisterLink();
+        registerPage.clickLoginLink();
 
-            mainPage.clickLoginButton();
-            registerPage.clickRegisterLink();
-            registerPage.clickLoginLink();
+        loginPage(client);
 
-            loginPage(client);
-
-            assertTrue(
-                    "После входа не открылась главная страница",
-                    mainPage.isOrderButtonDisplayed()
-            );
-        } finally {
-            deleteTestClient(client);
-        }
+        assertTrue(
+                "После входа не открылась главная страница",
+                mainPage.isOrderButtonDisplayed()
+        );
     }
 
     @Test
+    @DisplayName("Вход со страницы восстановления пароля")
+    @Description("Проверить, что пользователь может перейти со страницы восстановления пароля на страницу входа, авторизоваться и увидеть кнопку заказа.")
     public void loginFromForgotPasswordPage() {
-        Client client = createTestClient();
+        MainPage mainPage = new MainPage(driver);
+        ForgotPasswordPage forgotPasswordPage =
+                new ForgotPasswordPage(driver);
 
-        try {
-            MainPage mainPage = new MainPage(driver);
-            ForgotPasswordPage forgotPasswordPage =
-                    new ForgotPasswordPage(driver);
+        mainPage.clickLoginButton();
+        forgotPasswordPage.clickForgotPasswordLink();
+        forgotPasswordPage.clickLoginLink();
 
-            mainPage.clickLoginButton();
-            forgotPasswordPage.clickForgotPasswordLink();
-            forgotPasswordPage.clickLoginLink();
+        loginPage(client);
 
-            loginPage(client);
-
-            assertTrue(
-                    "После входа не открылась главная страница",
-                    mainPage.isOrderButtonDisplayed()
-            );
-        } finally {
-            deleteTestClient(client);
-        }
+        assertTrue(
+                "После входа не открылась главная страница",
+                mainPage.isOrderButtonDisplayed()
+        );
     }
 
     private Client createTestClient() {
         ClientSteps clientSteps = new ClientSteps();
-        Client client = clientSteps.createTestClient();
+        Client newClient = clientSteps.createTestClient();
 
-        Response response = clientSteps.registerClient(client);
+        Response response = clientSteps.registerClient(newClient);
 
         assertTrue(
                 "Не удалось создать тестового пользователя через API. Код: "
@@ -111,7 +107,7 @@ public class LoginTest extends BaseTest {
                         || response.statusCode() == 201
         );
 
-        return client;
+        return newClient;
     }
 
     private void loginPage(Client client) {
@@ -142,6 +138,14 @@ public class LoginTest extends BaseTest {
                     "Не удалось удалить тестового пользователя: "
                             + e.getMessage()
             );
+        }
+    }
+
+    @After
+    public void deleteTestClientAfterTest() {
+        if (client != null) {
+            deleteTestClient(client);
+            client = null;
         }
     }
 }
