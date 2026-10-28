@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -46,14 +47,17 @@ public class MainPage {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
+    @Step("Нажатие кнопки «Войти в аккаунт»")
     public void clickLoginButton() {
         wait.until(ExpectedConditions.elementToBeClickable(loginButton)).click();
     }
 
+    @Step("Переход в личный кабинет")
     public void clickAccountButton() {
         wait.until(ExpectedConditions.elementToBeClickable(profileButton)).click();
     }
 
+    @Step("Выбор раздела «Булки»")
     public void clickBunButton() {
         WebElement tab = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(bunButton)
@@ -65,35 +69,41 @@ public class MainPage {
                 .perform();
     }
 
+    @Step("Выбор раздела «Соусы»")
     public void clickSauceButton() {
         wait.until(ExpectedConditions.elementToBeClickable(sauceButton)).click();
     }
 
+    @Step("Выбор раздела «Начинки»")
     public void clickFillingButton() {
         wait.until(ExpectedConditions.elementToBeClickable(fillingButton)).click();
     }
 
+    @Step("Получение текста активной вкладки «Булки»")
     public String getActiveBunTabText() {
         return wait.until(
                 ExpectedConditions.visibilityOfElementLocated(activeBunTab)
         ).getText();
     }
 
+    @Step("Получение текста активной вкладки «Соусы»")
     public String getActiveSauceTabText() {
         return wait.until(
                 ExpectedConditions.visibilityOfElementLocated(activeSauceTab)
         ).getText();
     }
 
+    @Step("Получение текста активной вкладки «Начинки»")
     public String getActiveFillingTabText() {
         return wait.until(
                 ExpectedConditions.visibilityOfElementLocated(activeFillingTab)
         ).getText();
     }
 
-    private final By orderButton =
+        private final By orderButton =
             By.xpath("//button[normalize-space()='Оформить заказ']");
 
+    @Step("Проверка отображения кнопки «Оформить заказ»")
     public boolean isOrderButtonDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOfElementLocated(orderButton)

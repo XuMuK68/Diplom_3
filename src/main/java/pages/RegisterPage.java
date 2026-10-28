@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import io.qameta.allure.Step;
 
 import java.time.Duration;
 
@@ -40,52 +41,56 @@ public class RegisterPage {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     }
 
-    // Переходы между страницами
+    @Step("Переход на страницу регистрации")
     public void clickRegisterLink() {
         wait.until(
                 ExpectedConditions.elementToBeClickable(registerLink)
         ).click();
     }
 
+    @Step("Переход на страницу входа")
     public void clickLoginLink() {
         wait.until(
                 ExpectedConditions.elementToBeClickable(loginLink)
         ).click();
     }
 
-    // Проверка страницы регистрации
+    @Step("Проверка отображения страницы регистрации")
     public boolean isRegisterPageDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOfElementLocated(nameField)
         ).isDisplayed();
     }
 
-    // Заполнение полей
+    @Step("Ввод имени")
     public void enterName(String name) {
         wait.until(
                 ExpectedConditions.visibilityOfElementLocated(nameField)
         ).sendKeys(name);
     }
 
+    @Step("Ввод email")
     public void enterEmail(String email) {
         wait.until(
                 ExpectedConditions.visibilityOfElementLocated(emailField)
         ).sendKeys(email);
     }
 
+    @Step("Ввод пароля")
     public void enterPassword(String password) {
         wait.until(
                 ExpectedConditions.visibilityOfElementLocated(passwordField)
         ).sendKeys(password);
     }
 
+    @Step("Нажатие кнопки регистрации")
     public void clickRegisterButton() {
         wait.until(
                 ExpectedConditions.elementToBeClickable(registerButton)
         ).click();
     }
 
-    // Полная регистрация
+    @Step("Регистрация пользователя")
     public void register(String name, String email, String password) {
         enterName(name);
         enterEmail(email);
@@ -93,7 +98,7 @@ public class RegisterPage {
         clickRegisterButton();
     }
 
-    // Проверка ошибки короткого пароля
+    @Step("Проверка отображения ошибки пароля")
     public boolean isPasswordErrorDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOfElementLocated(passwordError)

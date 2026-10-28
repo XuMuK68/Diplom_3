@@ -5,6 +5,7 @@ import client.ClientSteps;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Test;
 import pages.MainPage;
 import pages.RegisterPage;
@@ -16,34 +17,33 @@ import static org.junit.Assert.assertTrue;
 
 public class RegisterTest extends BaseTest {
 
+    private ClientSteps clientSteps;
+    private Client client;
+
     @Test
     @DisplayName("Успешная регистрация пользователя")
     @Description("Проверить, что после регистрации пользователя открывается страница входа.")
     public void successfulRegistrationTest() {
-        ClientSteps clientSteps = new ClientSteps();
-        Client client = clientSteps.createTestClient();
+        clientSteps = new ClientSteps();
+        client = clientSteps.createTestClient();
 
         MainPage mainPage = new MainPage(driver);
         RegisterPage registerPage = new RegisterPage(driver);
         LoginPage loginPage = new LoginPage(driver);
 
-        try {
-            mainPage.clickLoginButton();
-            registerPage.clickRegisterLink();
+        mainPage.clickLoginButton();
+        registerPage.clickRegisterLink();
 
-            registerPage.register(
-                    client.getName(),
-                    client.getEmail(),
-                    client.getPassword()
-            );
+        registerPage.register(
+                client.getName(),
+                client.getEmail(),
+                client.getPassword()
+        );
 
-            assertTrue(
-                    "Не открылась страница входа после регистрации",
-                    loginPage.isLoginPageDisplayed()
-            );
-        } finally {
-            deleteTestClientIfExists(clientSteps, client);
-        }
+        assertTrue(
+                "Не открылась страница входа после регистрации",
+                loginPage.isLoginPageDisplayed()
+        );
     }
 
     @Test
@@ -68,6 +68,14 @@ public class RegisterTest extends BaseTest {
                 "Не появилось сообщение о некорректном пароле",
                 registerPage.isPasswordErrorDisplayed()
         );
+    }
+
+    @After
+    public void deleteTestClientAfterTest() {
+        if (clientSteps != null && client != null) {
+            deleteTestClientIfExists(clientSteps, client);
+            client = null;
+        }
     }
 
     private void deleteTestClientIfExists(
